@@ -1,9 +1,9 @@
 Name: YOUR NAME HERE
 
-| Date    |  Time  |                                     Update |
-|:--------|:------:|-------------------------------------------:|
-| April 5 | 9-10pm | I tried to write abstract, efficient code. |
-|         |        |                                            |
+| Date   |    Time     |                                                                                                                                                                                                                                                                                                                                                                                                 Update |
+|:-------|:-----------:|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
+| Sep 24 | 1:50-2:20pm | I recalled the concept of a dictionary (hashmap) in python and looked through the java docs. This led me to find the hashtable class and implement it in my code. This solution passed all tests, but I would like to implement a hashtable on my own. Sorry for not commiting this at the correct time. I hadn't finished writing it last class and didn't want to work through Kieran's presentation |
+|        |             |                                                                                                                                                                                                                                                                                                                                                                                                        |
 
 
 To add a new row to the table, click into a cell and then hit shift-enter.
