@@ -1,3 +1,6 @@
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 
 /**
@@ -21,8 +24,8 @@ public class SpellCheck {
      */
 
     private class Node {
-        // Each node has space for 26 children, one for each letter of the alphabet
-        Node[] children = new Node[26];
+        // Each node has space for 26 children, one for each letter of the alphabet, plus one for other characters
+        Node[] children = new Node[27];
         // If a node is a word ending, set a boolean to communicate it
         boolean isWordEnding = false;
     }
@@ -43,10 +46,11 @@ public class SpellCheck {
             for (char letter : formatWord(word)) {
                 // Turn the letter into an index from 0-25
                 int index = letter - 'a';
+                // If the letter is not a lowercase letter, set the index to 26 to represent other characters
                 if (index < 0 || index > 25) {
-                    // If letter is not a lowercase letter, skip it
-                    continue;
+                    index = 26;
                 }
+
                 // If the node doesn't exist, create it
                 if (current.children[index] == null) {
                     current.children[index] = new Node();
@@ -66,7 +70,7 @@ public class SpellCheck {
             for (char letter : formatWord(word)) {
                 int index = letter - 'a';
                 if (index < 0 || index > 25) {
-                    continue;
+                    index = 26;
                 }
                 // If the node doesn't exist, no combination of these letters makes a word
                 if (node.children[index] == null) {
@@ -83,6 +87,8 @@ public class SpellCheck {
 
     public String[] checkWords(String[] text, String[] dictionary) {
 
+        char abc = 'a' + 152;
+        System.out.println(abc);
         // Tree to store all the letter combinations and whether they lead to valid words
         WordTree tree = new WordTree();
         for (String word : dictionary) {
@@ -97,10 +103,12 @@ public class SpellCheck {
             // If the word isn't in the tree, add it to the list of misspelled words
             if (!tree.search(word)) {
                 misspelledWords.add(word);
+
+                // Add the word to the tree, so we don't have to check it again
+                tree.addWord(word);
             }
         }
 
-        // Convert the ArrayList to an array
-        return misspelledWords.toArray(new String[misspelledWords.size()]);
+        return misspelledWords.toArray(new String[0]);
     }
 }
