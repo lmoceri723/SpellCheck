@@ -25,7 +25,7 @@ public class SpellCheck {
 
     private class Node {
         // Each node has space for 26 children, one for each letter of the alphabet, plus one for other characters
-        Node[] children = new Node[27];
+        Node[] children = new Node[256];
         // If a node is a word ending, set a boolean to communicate it
         boolean isWordEnding = false;
     }
@@ -34,8 +34,6 @@ public class SpellCheck {
         Node root = new Node();
 
         public char[] formatWord(String word) {
-            // Format the word to be all lowercase
-            word = word.toLowerCase();
             return word.toCharArray();
         }
 
@@ -44,12 +42,7 @@ public class SpellCheck {
             Node current = root;
 
             for (char letter : formatWord(word)) {
-                // Turn the letter into an index from 0-25
-                int index = letter - 'a';
-                // If the letter is not a lowercase letter, set the index to 26 to represent other characters
-                if (index < 0 || index > 25) {
-                    index = 26;
-                }
+                int index = letter;
 
                 // If the node doesn't exist, create it
                 if (current.children[index] == null) {
@@ -64,14 +57,11 @@ public class SpellCheck {
 
         // Search for a word in the tree
         // Does basically the same checks as addWord by following its path to validate a word
-        public boolean search(String word) {
+        public boolean searchWord(String word) {
             Node node = root;
 
             for (char letter : formatWord(word)) {
-                int index = letter - 'a';
-                if (index < 0 || index > 25) {
-                    index = 26;
-                }
+                int index = letter;
                 // If the node doesn't exist, no combination of these letters makes a word
                 if (node.children[index] == null) {
                     return false;
@@ -86,13 +76,10 @@ public class SpellCheck {
     }
 
     public String[] checkWords(String[] text, String[] dictionary) {
-
-        char abc = 'a' + 152;
-        System.out.println(abc);
         // Tree to store all the letter combinations and whether they lead to valid words
-        WordTree tree = new WordTree();
+        WordTree trie = new WordTree();
         for (String word : dictionary) {
-            tree.addWord(word);
+            trie.addWord(word);
         }
 
         // Arraylist to store all the misspelled words
@@ -101,11 +88,11 @@ public class SpellCheck {
         // Check each word against the tree
         for (String word : text) {
             // If the word isn't in the tree, add it to the list of misspelled words
-            if (!tree.search(word)) {
+            if (!trie.searchWord(word)) {
                 misspelledWords.add(word);
 
                 // Add the word to the tree, so we don't have to check it again
-                tree.addWord(word);
+                trie.addWord(word);
             }
         }
 
