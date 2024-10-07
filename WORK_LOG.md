@@ -1,4 +1,4 @@
-Name: YOUR NAME HERE
+Name: Landon Moceri
 
 | Date   |     Time      |                                                                                                                                                                                                                                                                                                                                                                                                 Update |
 |:-------|:-------------:|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
@@ -6,6 +6,7 @@ Name: YOUR NAME HERE
 | Sep 29 | 10:30-11:00pm |                                                       I decided to switch to a tree based approach after talking with friends in class. I designed a tree where each node would represent a letter and nodes would be strung together to create words. Once the end of a word was reached, the tree would mark it with a boolean. I started implementing this approach, but I still have one bug left. |
 | Sep 30 |   8-8:30am    |                                                                                                                      I spent this 30 minute period debugging my code. I figured out that I was not handling duplicates, so I treated each mispelled word as a newly valid word so that it won't be counted twice. I pass one more test, but am not handling another edge case and so I fail two tests. |
 | Sep 30 | 11:20-11:50am |                                                                                                 I listened to Mr. Blick's lecture on Tries, and realized that it was remarkably similar to my algorithm. The only difference was that his solution had a child nodes map entry for each ascii letter (256) and mine tried to condense it. When I went to this simpler model, my code passed all tests. |
+| Oct 7  |  7:50-8:20am  |                                                   I looked back through the slides and made a plan to implement a TST. I made the change from 256 nodes to 3, and was able to get all of my functions working. My code passes all tests. I was also able to bypass having a second TST to ensure no duplicates by just adding the misspelled word to the main TST after finding it for the first time. |
 
 
 To add a new row to the table, click into a cell and then hit shift-enter.

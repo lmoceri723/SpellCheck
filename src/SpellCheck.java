@@ -1,6 +1,3 @@
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 
 /**
@@ -14,24 +11,15 @@ import java.util.ArrayList;
 
 public class SpellCheck {
 
-
-    /**
-     * checkWords finds all words in text that are not present in dictionary
-     *
-     * @param text The list of all words in the text.
-     * @param dictionary The list of all accepted words.
-     * @return String[] of all mispelled words in the order they appear in text. No duplicates.
-     */
-
-    private class Node {
+    private class TrieNode {
         // Each node has space for 26 children, one for each letter of the alphabet, plus one for other characters
-        Node[] children = new Node[256];
+        TrieNode[] children = new TrieNode[256];
         // If a node is a word ending, set a boolean to communicate it
         boolean isWordEnding = false;
     }
 
-    private class WordTree {
-        Node root = new Node();
+    private class WordTrie {
+        TrieNode root = new TrieNode();
 
         public char[] formatWord(String word) {
             return word.toCharArray();
@@ -39,14 +27,14 @@ public class SpellCheck {
 
         // Add a word to the tree
         public void addWord(String word) {
-            Node current = root;
+            TrieNode current = root;
 
             for (char letter : formatWord(word)) {
                 int index = letter;
 
                 // If the node doesn't exist, create it
                 if (current.children[index] == null) {
-                    current.children[index] = new Node();
+                    current.children[index] = new TrieNode();
                 }
                 // Move to the next node
                 current = current.children[index];
@@ -58,7 +46,7 @@ public class SpellCheck {
         // Search for a word in the tree
         // Does basically the same checks as addWord by following its path to validate a word
         public boolean searchWord(String word) {
-            Node node = root;
+            TrieNode node = root;
 
             for (char letter : formatWord(word)) {
                 int index = letter;
@@ -75,11 +63,103 @@ public class SpellCheck {
         }
     }
 
+    private class TSTNode {
+        char value;
+        boolean isWordEnding;
+        TSTNode less, equal, greater;
+
+        // Basic constructor
+        public TSTNode(char value) {
+            this.value = value;
+        }
+    }
+
+    private class TST {
+        TSTNode root;
+
+        // Adds a word to the TST
+        public void addWord(String word) {
+            // If the tree is empty, create a new root node
+            if (root == null) {
+                root = new TSTNode(word.charAt(0));
+            }
+            TSTNode currentNode = root;
+            int letterIndex = 0;
+
+            // Traverse the tree until we've added all the letters of the word
+            while (letterIndex < word.length()) {
+                char letter = word.charAt(letterIndex);
+
+                // If the current node's value is greater than the current letter, traverse to the less node
+                if (letter < currentNode.value) {
+                    if (currentNode.less == null) {
+                        currentNode.less = new TSTNode(letter);
+                    }
+                    currentNode = currentNode.less;
+                }
+                // If the current node's value is less than the current letter, traverse to the greater node
+                else if (letter > currentNode.value) {
+                    if (currentNode.greater == null) {
+                        currentNode.greater = new TSTNode(letter);
+                    }
+                    currentNode = currentNode.greater;
+                }
+                // If the current node's value is equal to the current letter, traverse to the equal node
+                else {
+                    // Increment the letter index, as we've found a match
+                    letterIndex++;
+                    if (letterIndex < word.length()) {
+                        if (currentNode.equal == null) {
+                            currentNode.equal = new TSTNode(word.charAt(letterIndex));
+                        }
+                        currentNode = currentNode.equal;
+                    }
+                }
+            }
+            // Once we've added all the letters, mark the node as a word ending
+            currentNode.isWordEnding = true;
+        }
+
+        public boolean searchWord(String word) {
+            TSTNode currentNode = root;
+            int letterIndex = 0;
+
+            // Traverse the tree until we've found the word or reached a null node
+            while (currentNode != null && letterIndex < word.length()) {
+                char letter = word.charAt(letterIndex);
+
+                // If the current node's value is greater than the current letter, traverse to the less node
+                if (letter < currentNode.value) {
+                    currentNode = currentNode.less;
+                // If the current node's value is less than the current letter, traverse to the greater node
+                } else if (letter > currentNode.value) {
+                    currentNode = currentNode.greater;
+                // If the current node's value is equal to the current letter, traverse to the equal node
+                } else {
+                    // Increment the letter index, as we've found a match
+                    letterIndex++;
+                    if (letterIndex < word.length()) {
+                        currentNode = currentNode.equal;
+                    }
+                }
+            }
+            // Return whether the current node is a word ending and not null
+            return currentNode != null && currentNode.isWordEnding;
+        }
+    }
+
+    /**
+     * checkWords finds all words in text that are not present in dictionary
+     *
+     * @param text The list of all words in the text.
+     * @param dictionary The list of all accepted words.
+     * @return String[] of all mispelled words in the order they appear in text. No duplicates.
+     */
     public String[] checkWords(String[] text, String[] dictionary) {
         // Tree to store all the letter combinations and whether they lead to valid words
-        WordTree trie = new WordTree();
+        TST tree = new TST();
         for (String word : dictionary) {
-            trie.addWord(word);
+            tree.addWord(word);
         }
 
         // Arraylist to store all the misspelled words
@@ -88,11 +168,11 @@ public class SpellCheck {
         // Check each word against the tree
         for (String word : text) {
             // If the word isn't in the tree, add it to the list of misspelled words
-            if (!trie.searchWord(word)) {
+            if (!tree.searchWord(word)) {
                 misspelledWords.add(word);
 
                 // Add the word to the tree, so we don't have to check it again
-                trie.addWord(word);
+                tree.addWord(word);
             }
         }
 
